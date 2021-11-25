@@ -1,8 +1,12 @@
 using ConfArch.Data;
 using ConfArch.Data.Repositories;
+using ConfArch.Web;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authentication.Google;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -26,7 +30,10 @@ namespace ConfArchProject
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllersWithViews();
+            //Register Authorize at a global level
+            services.AddControllersWithViews(o => o.Filters.Add(new AuthorizeFilter()));
+
+
             services.AddScoped<IConferenceRepository, ConferenceRepository>();
             services.AddScoped<IProposalRepository, ProposalRepository>();
             services.AddScoped<IAttendeeRepository, AttendeeRepository>();
@@ -35,6 +42,20 @@ namespace ConfArchProject
             services.AddDbContext<ConfArchDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"),
                     assembly => assembly.MigrationsAssembly(typeof(ConfArchDbContext).Assembly.FullName)));
+            //Authentication using cookie
+            services.AddAuthentication(o =>
+            {
+                o.DefaultScheme =
+                CookieAuthenticationDefaults.AuthenticationScheme;
+                //o.DefaultChallengeScheme =GoogleDefaults.AuthenticationScheme;
+            }).AddCookie()
+              .AddCookie(ExternalAuthenticationDefaults.AuthenticationScheme)
+                .AddGoogle(o =>
+                {
+                    o.SignInScheme = ExternalAuthenticationDefaults.AuthenticationScheme;
+                    o.ClientId = Configuration["Google:ClientId"];
+                    o.ClientSecret = Configuration["Google:ClientSecret"];
+                });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -54,7 +75,8 @@ namespace ConfArchProject
             app.UseStaticFiles();
 
             app.UseRouting();
-
+            //Setup the Authentication middleware
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

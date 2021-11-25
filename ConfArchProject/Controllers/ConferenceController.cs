@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ConfArch.Web.Controllers
 {
-    [AllowAnonymous]
+   [AllowAnonymous]
     public class ConferenceController: Controller
     {
         private readonly IConferenceRepository repo;

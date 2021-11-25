@@ -1,11 +1,12 @@
 ﻿using ConfArch.Data.Models;
 using ConfArch.Data.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
 namespace ConfArch.Web.Controllers
 {
-
+    [Authorize]
     public class ProposalController: Controller
     {
         private readonly IConferenceRepository conferenceRepo;

@@ -9,8 +9,8 @@ namespace ConfArch.Data.Repositories
     {
         private List<User> users = new List<User>
         {
-            new User { Id = 3522, Name = "roland", Password = "K7gNU3sdo+OL0wNhqoVWhr3g6s1xYv72ol/pe/Unols=",
-                FavoriteColor = "blue", Role = "Admin", GoogleId = "101517359495305583936" }
+            new User { Id = 3522, Name = "shani", Password = "K7gNU3sdo+OL0wNhqoVWhr3g6s1xYv72ol/pe/Unols=",
+                FavoriteColor = "blue", Role = "Admin", GoogleId = "111244944238348820224" }
         };
 
         public User GetByUsernameAndPassword(string username, string password)
